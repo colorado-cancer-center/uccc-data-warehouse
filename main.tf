@@ -17,31 +17,31 @@ variable "project_name" {
 }
 
 resource "random_id" "id" {
- byte_length = 4
- prefix      = "${var.project_name}-"
+  byte_length = 4
+  prefix      = "${var.project_name}-"
 }
 
 provider "google" {
- region = "${var.region}"
+  region = "${var.region}"
 }
 
 resource "google_project" "project" {
- name            = "${var.project_name}"
- project_id      = "${random_id.id.hex}"
- billing_account = "${var.billing_account}"
- org_id = "${var.org_id}"
- auto_create_network = "false"
+  name            = "${var.project_name}"
+  project_id      = "${random_id.id.hex}"
+  billing_account = "${var.billing_account}"
+  org_id = "${var.org_id}"
+  auto_create_network = "false"
 }
 
 resource "google_project_service" "project" {
- for_each = toset( [
-   "iam.googleapis.com",
-   "bigquery.googleapis.com",
-   "storage.googleapis.com"
- ])
+  for_each = toset( [
+    "iam.googleapis.com",
+    "bigquery.googleapis.com",
+    "storage.googleapis.com"
+  ] )
 
- project = "${google_project.project.project_id}"
- service = each.key
+  project = "${google_project.project.project_id}"
+  service = each.key
 }
 
 output "project_id" {
